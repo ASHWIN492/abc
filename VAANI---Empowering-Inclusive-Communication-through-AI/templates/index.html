@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>File Upload</title>
+</head>
+<body>
+    <h1>Upload a file for conversion to speech</h1>
+    <form id="uploadForm" action="/upload" method="post" enctype="multipart/form-data">
+        <input type="file" id="fileInput" name="file" accept=".pdf, .jpg, .jpeg, .png">
+        <select id="taskSelect" name="task">
+            <option value="image">Image Recognition</option>
+            <option value="pdf">PDF Text Extraction</option>
+        </select>
+        <select id="languageSelect" name="language">
+            <option value="en">English</option>
+            <option value="hi">Hindi</option>
+            <option value="bn">Bengali</option>
+            <option value="te">Telugu</option>
+            <option value="mr">Marathi</option>
+            <!-- Add more options for other Indian languages -->
+        </select>
+        <input type="submit" value="Upload">
+    </form>
+    
+    <!-- Audio player -->
+    <div id="audioControls" style="display: none;">
+        <button id="playPauseButton">Play</button>
+        <input type="range" id="volumeControl" min="0" max="1" step="0.01" value="1">
+        <input type="range" id="speedControl" min="0.5" max="2" step="0.1" value="1">
+        <audio id="audioPlayer" controls>
+            <source src="" type="audio/mpeg">
+            Your browser does not support the audio element.
+        </audio>
+    </div>
+    
+    <!-- JavaScript to handle audio playback -->
+    <script>
+        // Function to play or pause audio
+        function playPauseAudio() {
+            var audio = document.getElementById('audioPlayer');
+            var button = document.getElementById('playPauseButton');
+            if (audio.paused) {
+                audio.play();
+                button.textContent = 'Pause';
+            } else {
+                audio.pause();
+                button.textContent = 'Play';
+            }
+        }
+
+        // Function to handle volume control
+        document.getElementById('volumeControl').addEventListener('input', function() {
+            var audio = document.getElementById('audioPlayer');
+            audio.volume = this.value;
+        });
+
+        // Function to handle speed control
+        document.getElementById('speedControl').addEventListener('input', function() {
+            var audio = document.getElementById('audioPlayer');
+            audio.playbackRate = this.value;
+        });
+
+        // Automatically play audio after page load if audio URL is provided
+        window.onload = function() {
+            var audioUrl = window.location.href.split('/').slice(0, -1).join('/') + '{{ audio_url }}';
+            var audio = document.getElementById('audioPlayer');
+            audio.src = audioUrl;
+            audio.play();
+            var audioControls = document.getElementById('audioControls');
+            audioControls.style.display = 'block';
+        };
+    </script>
+</body>
+</html>
